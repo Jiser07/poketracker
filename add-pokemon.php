@@ -15,13 +15,9 @@ if (isset($_POST['add_pokemon'])) {
     $type = trim($_POST['type']);
     $level = trim($_POST['level']);
     $status = trim($_POST['status']);
-    $rating = trim($_POST['rating']);
 
     if ($level < 1 || $level > 100) {
         $sys_message = "Level must be between 1 and 100.";
-        $msg_type = "error";
-    } elseif ($rating < 1 || $rating > 10) {
-        $sys_message = "Rating must be between 1 and 10.";
         $msg_type = "error";
     } elseif ($_FILES['image']['size'] > 2000000) {
         $sys_message = "Image size too large. 2MB max.";
@@ -39,8 +35,10 @@ if (isset($_POST['add_pokemon'])) {
             $folder = "uploads/" . $image_name;
             move_uploaded_file($temp_name, $folder);
 
-            $sql = "INSERT INTO pokemon (user_id, name, type, level, status, rating, image)
-                    VALUES ('$user_id', '$name', '$type', '$level', '$status', '$rating', '$image_name')";
+            $sql = "INSERT INTO pokemon
+                    (user_id, name, type, level, status, upvotes, image)
+                    VALUES
+                    ('$user_id', '$name', '$type', '$level', '$status', '0', '$image_name')";
 
             if (mysqli_query($conn, $sql)) {
                 $sys_message = "PKMN data registered to PC successfully!";
@@ -100,9 +98,15 @@ if (isset($_POST['add_pokemon'])) {
     <label>Type:</label>
     <select name="type" required>
         <option value="">-- Select Type --</option>
-        <option>Fire</option><option>Water</option><option>Grass</option>
-        <option>Electric</option><option>Psychic</option><option>Dragon</option>
-        <option>Normal</option><option>Flying</option><option>Fighting</option>
+        <option>Fire</option>
+        <option>Water</option>
+        <option>Grass</option>
+        <option>Electric</option>
+        <option>Psychic</option>
+        <option>Dragon</option>
+        <option>Normal</option>
+        <option>Flying</option>
+        <option>Fighting</option>
     </select>
 
     <label>Level (1-100):</label>
@@ -110,11 +114,10 @@ if (isset($_POST['add_pokemon'])) {
 
     <label>Status:</label>
     <select name="status">
-        <option>In Party</option><option>In PC Box</option><option>Daycare</option>
+        <option>In Party</option>
+        <option>In PC Box</option>
+        <option>Daycare</option>
     </select>
-
-    <label>Rating (1-10):</label>
-    <input type="number" name="rating" min="1" max="10" placeholder="Score">
 
     <label>Sprite / Image:</label>
     <input type="file" name="image" required>

@@ -32,23 +32,23 @@ if (isset($_POST['update_pokemon'])) {
     $type = $_POST['type'];
     $level = $_POST['level'];
     $status = $_POST['status'];
-    $rating = $_POST['rating'];
 
-    $update_sql = "UPDATE pokemon SET
-                   name='$name',
-                   type='$type',
-                   level='$level',
-                   status='$status',
-                   rating='$rating'
-
-                   WHERE id='$id'";
-
-    if (mysqli_query($conn, $update_sql)) {
-        header("Location: collection.php");
-        echo "<p>Pokémon updated successfully!</p>";
-        exit();
+    if ($level < 1 || $level > 100) {
+    echo "Level must be between 1 and 100.";
     } else {
-        echo "Error: " . mysqli_error($conn);
+        $update_sql = "UPDATE pokemon SET
+            name='$name',
+            type='$type',
+            level='$level',
+            status='$status'
+            WHERE id='$id'";
+
+        if (mysqli_query($conn, $update_sql)) {
+            header("Location: collection.php");
+            exit();
+        } else {
+            echo "Error: " . mysqli_error($conn);
+        }
     }
 }
 ?>
@@ -66,37 +66,30 @@ if (isset($_POST['update_pokemon'])) {
 <form method="POST">
 
     <input type="text"
-           name="name"
-           value="<?php echo $pokemon['name']; ?>"
-           required>
+            name="name"
+            value="<?php echo $pokemon['name']; ?>"
+            required>
 
     <br><br>
 
     <input type="text"
-           name="type"
-           value="<?php echo $pokemon['type']; ?>"
-           required>
+            name="type"
+            value="<?php echo $pokemon['type']; ?>"
+            required>
 
     <br><br>
 
     <input type="number"
-           name="level"
-           value="<?php echo $pokemon['level']; ?>"
-           required>
+            name="level"
+            value="<?php echo $pokemon['level']; ?>"
+            required>
 
     <br><br>
 
     <input type="text"
-           name="status"
-           value="<?php echo $pokemon['status']; ?>"
-           required>
-
-    <br><br>
-
-    <input type="number"
-           name="rating"
-           value="<?php echo $pokemon['rating']; ?>"
-           required>
+            name="status"
+            value="<?php echo $pokemon['status']; ?>"
+            required>
 
     <br><br>
 

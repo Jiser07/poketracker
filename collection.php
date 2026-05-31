@@ -63,8 +63,7 @@ $result = mysqli_query($conn, $sql);
                 <p id="detail-level" class="pkmn-level"></p>
                 <div class="stat-row"><span class="label">TYPE</span><span id="detail-type" class="val"></span></div>
                 <div class="stat-row"><span class="label">STATUS</span><span id="detail-status" class="val"></span></div>
-                <div class="stat-row"><span class="label">RATING</span><span id="detail-rating" class="val"></span></div>
-                
+                <div class="stat-row"><span class="label">UPVOTES</span><span id="detail-upvotes" class="val"></span></div>                
                 <div class="action-buttons">
                     <a id="btn-edit" href="#" class="btn-pc">EDIT</a>
                     <a id="btn-release" href="#" class="btn-pc btn-danger" onclick="return confirm('Release this Pokémon?')">RELEASE</a>
@@ -89,15 +88,15 @@ $result = mysqli_query($conn, $sql);
             <div class="pc-box-grid">
                 <?php while ($row = mysqli_fetch_assoc($result)) { ?>
                     <div class="pc-pokemon-slot" 
-                         onclick="updateDetails(this)"
-                         data-img="uploads/<?php echo htmlspecialchars($row['image']); ?>"
-                         data-name="<?php echo htmlspecialchars($row['name']); ?>"
-                         data-level="Lv<?php echo htmlspecialchars($row['level']); ?>"
-                         data-type="<?php echo htmlspecialchars($row['type']); ?>"
-                         data-status="<?php echo htmlspecialchars($row['status']); ?>"
-                         data-rating="<?php echo htmlspecialchars($row['rating']); ?>/10"
-                         data-edit="edit-pokemon.php?id=<?php echo $row['id']; ?>"
-                         data-delete="delete-pokemon.php?id=<?php echo $row['id']; ?>">
+                        onclick="updateDetails(this)"
+                        data-img="uploads/<?php echo htmlspecialchars($row['image']); ?>"
+                        data-name="<?php echo htmlspecialchars($row['name']); ?>"
+                        data-level="Lv<?php echo htmlspecialchars($row['level']); ?>"
+                        data-type="<?php echo htmlspecialchars($row['type']); ?>"
+                        data-status="<?php echo htmlspecialchars($row['status']); ?>"
+                        data-upvotes="▲ <?php echo htmlspecialchars($row['upvotes']); ?>"
+                        data-edit="edit-pokemon.php?id=<?php echo $row['id']; ?>"
+                        data-delete="delete-pokemon.php?id=<?php echo $row['id']; ?>">
                         <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
                     </div>
                 <?php } ?>
@@ -122,7 +121,7 @@ function updateDetails(element) {
     document.getElementById('detail-level').innerText = element.getAttribute('data-level');
     document.getElementById('detail-type').innerText = element.getAttribute('data-type');
     document.getElementById('detail-status').innerText = element.getAttribute('data-status');
-    document.getElementById('detail-rating').innerText = element.getAttribute('data-rating');
+    document.getElementById('detail-upvotes').innerText = element.getAttribute('data-upvotes');
     
     document.getElementById('btn-edit').href = element.getAttribute('data-edit');
     document.getElementById('btn-release').href = element.getAttribute('data-delete');

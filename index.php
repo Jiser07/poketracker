@@ -48,7 +48,14 @@ $result = mysqli_query($conn, $sql);
                 <div class="stat-row"><span class="label">TRAINER</span><span id="detail-trainer" class="val"></span></div>
                 <div class="stat-row"><span class="label">TYPE</span><span id="detail-type" class="val"></span></div>
                 <div class="stat-row"><span class="label">STATUS</span><span id="detail-status" class="val"></span></div>
-                <div class="stat-row"><span class="label">RATING</span><span id="detail-rating" class="val"></span></div>
+                <div class="stat-row"><span class="label">UPVOTES</span><span id="detail-upvotes" class="val"></span></div>
+                
+                <div class="action-buttons">
+                    <a id="btn-upvote" href="#" class="btn-pc">
+                        ▲ UPVOTE
+                    </a>
+                </div>
+
             </div>
             <div class="info-content empty-state" id="empty-state">
                 <p>Select a Pokémon<br>to view data.</p>
@@ -64,14 +71,16 @@ $result = mysqli_query($conn, $sql);
             <div class="pc-box-grid">
                 <?php while ($row = mysqli_fetch_assoc($result)) { ?>
                     <div class="pc-pokemon-slot" 
-                         onclick="updateDetails(this)"
-                         data-img="uploads/<?php echo htmlspecialchars($row['image']); ?>"
-                         data-name="<?php echo htmlspecialchars($row['name']); ?>"
-                         data-level="Lv<?php echo htmlspecialchars($row['level']); ?>"
-                         data-trainer="<?php echo htmlspecialchars($row['username']); ?>"
-                         data-type="<?php echo htmlspecialchars($row['type']); ?>"
-                         data-status="<?php echo htmlspecialchars($row['status']); ?>"
-                         data-rating="<?php echo htmlspecialchars($row['rating']); ?>/10">
+                        onclick="updateDetails(this)"
+                        data-img="uploads/<?php echo htmlspecialchars($row['image']); ?>"
+                        data-name="<?php echo htmlspecialchars($row['name']); ?>"
+                        data-level="Lv<?php echo htmlspecialchars($row['level']); ?>"
+                        data-trainer="<?php echo htmlspecialchars($row['username']); ?>"
+                        data-type="<?php echo htmlspecialchars($row['type']); ?>"
+                        data-status="<?php echo htmlspecialchars($row['status']); ?>"
+                        data-upvotes="▲ <?php echo htmlspecialchars($row['upvotes']); ?>"
+                        data-id="<?php echo $row['id']; ?>"
+                        data-owner="<?php echo $row['user_id']; ?>">
                         <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
                     </div>
                 <?php } ?>
@@ -97,7 +106,12 @@ function updateDetails(element) {
     document.getElementById('detail-trainer').innerText = element.getAttribute('data-trainer');
     document.getElementById('detail-type').innerText = element.getAttribute('data-type');
     document.getElementById('detail-status').innerText = element.getAttribute('data-status');
-    document.getElementById('detail-rating').innerText = element.getAttribute('data-rating');
+    document.getElementById('detail-upvotes').innerText = element.getAttribute('data-upvotes');
+
+    const pokemonId = element.getAttribute('data-id');
+
+    document.getElementById('btn-upvote').href =
+        'upvote.php?id=' + pokemonId;
 }
 </script>
 </body>
