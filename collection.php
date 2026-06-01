@@ -7,12 +7,14 @@ if (!isset($_SESSION['user_id'])) {
 include 'includes/connection.php';
 
 $user_id = $_SESSION['user_id'];
-$search = isset($_GET['search']) ? $_GET['search'] : "";
-$type_filter = isset($_GET['type']) ? $_GET['type'] : "";
+$search  = isset($_GET['search']) ? $_GET['search'] : "";
 
-$sql = "SELECT * FROM pokemon WHERE user_id='$user_id' AND name LIKE '%$search%'";
-if ($type_filter != "") { $sql .= " AND type='$type_filter'"; }
-$sql .= " ORDER BY created_at DESC";
+$sql = "SELECT pokemon.*, pokemon_dex.name AS species_name, pokemon_dex.sprite AS species_sprite
+        FROM pokemon
+        LEFT JOIN pokemon_dex ON pokemon.species_id = pokemon_dex.id
+        WHERE pokemon.user_id='$user_id' AND pokemon.nickname LIKE '%$search%'
+        ORDER BY pokemon.created_at DESC";
+
 $result = mysqli_query($conn, $sql);
 ?>
 <!DOCTYPE html>
@@ -39,14 +41,6 @@ $result = mysqli_query($conn, $sql);
     <form method="GET" class="pc-filter-form">
         <div class="filter-inputs">
             <input type="text" name="search" placeholder="Search PKMN..." value="<?php echo htmlspecialchars($search); ?>">
-            <select name="type">
-                <option value="">All Types</option>
-                <option value="Fire" <?php if($type_filter=='Fire') echo 'selected'; ?>>Fire</option>
-                <option value="Water" <?php if($type_filter=='Water') echo 'selected'; ?>>Water</option>
-                <option value="Grass" <?php if($type_filter=='Grass') echo 'selected'; ?>>Grass</option>
-                <option value="Electric" <?php if($type_filter=='Electric') echo 'selected'; ?>>Electric</option>
-                <option value="Psychic" <?php if($type_filter=='Psychic') echo 'selected'; ?>>Psychic</option>
-            </select>
             <button type="submit">SEARCH</button>
         </div>
         <div class="result-count">IN BOX: <?php echo mysqli_num_rows($result); ?></div>
@@ -55,22 +49,29 @@ $result = mysqli_query($conn, $sql);
     <div class="pc-box">
         <div class="pc-info-panel">
             <div class="panel-header">- PKMN DATA -</div>
-            <div class="sprite-box">
-                <img id="detail-img" src="" alt="Sprite" style="display:none;">
-            </div>
-            
+
             <div class="info-content" id="detail-content" style="display:none;">
-                <h3 id="detail-name" class="pkmn-name"></h3>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                    <img id="detail-sprite" src="" alt="Sprite" style="display:none; image-rendering:pixelated; width:64px; height:64px; flex-shrink:0;">
+                    <div>
+                        <h3 id="detail-nickname" class="pkmn-name" style="margin:0;"></h3>
+                        <p id="detail-species" style="font-size:0.7rem; opacity:0.7; margin:0;"></p>
+                    </div>
+                </div>
                 <p id="detail-level" class="pkmn-level"></p>
-                <div class="stat-row"><span class="label">TYPE</span><span id="detail-type" class="val"></span></div>
-                <div class="stat-row"><span class="label">STATUS</span><span id="detail-status" class="val"></span></div>
-                <div class="stat-row"><span class="label">UPVOTES</span><span id="detail-upvotes" class="val"></span></div>                
+                <div class="stat-row"><span class="label">GENDER</span><span id="detail-gender" class="val"></span></div>
+                <div class="stat-row"><span class="label">UPVOTES</span><span id="detail-upvotes" class="val"></span></div>
+
+                <div class="sprite-box" style="margin-top:10px;">
+                    <img id="detail-thumbnail" src="" alt="Thumbnail" style="display:none; max-width:100%; border-radius:6px;">
+                </div>
+
                 <div class="action-buttons">
                     <a id="btn-edit" href="#" class="btn-pc">EDIT</a>
                     <a id="btn-release" href="#" class="btn-pc btn-danger" onclick="return confirm('Release this Pokémon?')">RELEASE</a>
                 </div>
             </div>
-            
+
             <div class="info-content empty-state" id="empty-state">
                 <?php if (mysqli_num_rows($result) == 0) { ?>
                     <p>Box is empty.<br>Go catch some!</p>
@@ -87,18 +88,22 @@ $result = mysqli_query($conn, $sql);
                 <span class="arrow">▶</span>
             </div>
             <div class="pc-box-grid">
-                <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-                    <div class="pc-pokemon-slot" 
+                <?php while ($row = mysqli_fetch_assoc($result)) {
+                    $gender_icon = $row['gender'] === 'Female' ? '♀' : '♂';
+                    $sprite_url = htmlspecialchars($row['species_sprite'] ?? '');
+                ?>
+                    <div class="pc-pokemon-slot"
                         onclick="updateDetails(this)"
-                        data-img="uploads/<?php echo htmlspecialchars($row['image']); ?>"
-                        data-name="<?php echo htmlspecialchars($row['name']); ?>"
+                        data-thumbnail="uploads/<?php echo htmlspecialchars($row['image']); ?>"
+                        data-sprite="<?php echo $sprite_url; ?>"
+                        data-nickname="<?php echo htmlspecialchars($row['nickname']); ?>"
+                        data-species="<?php echo htmlspecialchars($row['species_name'] ?? '???'); ?>"
                         data-level="Lv<?php echo htmlspecialchars($row['level']); ?>"
-                        data-type="<?php echo htmlspecialchars($row['type']); ?>"
-                        data-status="<?php echo htmlspecialchars($row['status']); ?>"
+                        data-gender="<?php echo $gender_icon . ' ' . htmlspecialchars($row['gender']); ?>"
                         data-upvotes="▲ <?php echo htmlspecialchars($row['upvotes']); ?>"
                         data-edit="edit-pokemon.php?id=<?php echo $row['id']; ?>"
                         data-delete="delete-pokemon.php?id=<?php echo $row['id']; ?>">
-                        <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
+                        <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['nickname']); ?>">
                     </div>
                 <?php } ?>
             </div>
@@ -113,18 +118,22 @@ function updateDetails(element) {
 
     document.getElementById('empty-state').style.display = 'none';
     document.getElementById('detail-content').style.display = 'block';
-    
-    const imgElement = document.getElementById('detail-img');
-    imgElement.style.display = 'block';
-    imgElement.src = element.getAttribute('data-img');
-    
-    document.getElementById('detail-name').innerText = element.getAttribute('data-name');
-    document.getElementById('detail-level').innerText = element.getAttribute('data-level');
-    document.getElementById('detail-type').innerText = element.getAttribute('data-type');
-    document.getElementById('detail-status').innerText = element.getAttribute('data-status');
-    document.getElementById('detail-upvotes').innerText = element.getAttribute('data-upvotes');
-    
-    document.getElementById('btn-edit').href = element.getAttribute('data-edit');
+
+    const sprite = document.getElementById('detail-sprite');
+    sprite.src = element.getAttribute('data-sprite');
+    sprite.style.display = 'inline-block';
+
+    const thumb = document.getElementById('detail-thumbnail');
+    thumb.src = element.getAttribute('data-thumbnail');
+    thumb.style.display = 'block';
+
+    document.getElementById('detail-nickname').innerText  = element.getAttribute('data-nickname');
+    document.getElementById('detail-species').innerText   = element.getAttribute('data-species');
+    document.getElementById('detail-level').innerText     = element.getAttribute('data-level');
+    document.getElementById('detail-gender').innerText    = element.getAttribute('data-gender');
+    document.getElementById('detail-upvotes').innerText   = element.getAttribute('data-upvotes');
+
+    document.getElementById('btn-edit').href    = element.getAttribute('data-edit');
     document.getElementById('btn-release').href = element.getAttribute('data-delete');
 }
 </script>
