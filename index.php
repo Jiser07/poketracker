@@ -2,9 +2,10 @@
 session_start();
 include 'includes/connection.php';
 
-$sql = "SELECT pokemon.*, users.username
+$sql = "SELECT pokemon.*, users.username, pokemon_dex.name AS species_name, pokemon_dex.sprite AS species_sprite
         FROM pokemon
         JOIN users ON pokemon.user_id = users.id
+        LEFT JOIN pokemon_dex ON pokemon.species_id = pokemon_dex.id
         ORDER BY pokemon.created_at DESC";
 
 $result = mysqli_query($conn, $sql);
@@ -39,25 +40,29 @@ $result = mysqli_query($conn, $sql);
     <div class="pc-box">
         <div class="pc-info-panel">
             <div class="panel-header">- PKMN DATA -</div>
-            <div class="sprite-box">
-                <img id="detail-img" src="" alt="Sprite" style="display:none;">
-            </div>
-            
+
             <div class="info-content" id="detail-content" style="display:none;">
-                <h3 id="detail-name" class="pkmn-name"></h3>
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
+                    <img id="detail-sprite" src="" alt="Sprite" style="display:none; image-rendering:pixelated; width:64px; height:64px; flex-shrink:0;">
+                    <div>
+                        <h3 id="detail-nickname" class="pkmn-name" style="margin:0;"></h3>
+                        <p id="detail-species" style="font-size:0.7rem; opacity:0.7; margin:0;"></p>
+                    </div>
+                </div>
                 <p id="detail-level" class="pkmn-level"></p>
                 <div class="stat-row"><span class="label">TRAINER</span><span id="detail-trainer" class="val"></span></div>
-                <div class="stat-row"><span class="label">TYPE</span><span id="detail-type" class="val"></span></div>
-                <div class="stat-row"><span class="label">STATUS</span><span id="detail-status" class="val"></span></div>
+                <div class="stat-row"><span class="label">GENDER</span><span id="detail-gender" class="val"></span></div>
                 <div class="stat-row"><span class="label">UPVOTES</span><span id="detail-upvotes" class="val"></span></div>
-                
-                <div class="action-buttons">
-                    <a id="btn-upvote" href="#" class="btn-pc">
-                        ▲ UPVOTE
-                    </a>
+
+                <div class="sprite-box" style="margin-top:10px;">
+                    <img id="detail-thumbnail" src="" alt="Thumbnail" style="display:none; max-width:100%; border-radius:6px;">
                 </div>
 
+                <div class="action-buttons">
+                    <a id="btn-upvote" href="#" class="btn-pc">▲ UPVOTE</a>
+                </div>
             </div>
+
             <div class="info-content empty-state" id="empty-state">
                 <p>Select a Pokémon<br>to view data.</p>
             </div>
@@ -70,19 +75,22 @@ $result = mysqli_query($conn, $sql);
                 <span class="arrow">▶</span>
             </div>
             <div class="pc-box-grid">
-                <?php while ($row = mysqli_fetch_assoc($result)) { ?>
-                    <div class="pc-pokemon-slot" 
+                <?php while ($row = mysqli_fetch_assoc($result)) {
+                    $gender_icon = $row['gender'] === 'Female' ? '♀' : '♂';
+                    $sprite_url = htmlspecialchars($row['species_sprite'] ?? '');
+                ?>
+                    <div class="pc-pokemon-slot"
                         onclick="updateDetails(this)"
-                        data-img="uploads/<?php echo htmlspecialchars($row['image']); ?>"
-                        data-name="<?php echo htmlspecialchars($row['name']); ?>"
+                        data-thumbnail="uploads/<?php echo htmlspecialchars($row['image']); ?>"
+                        data-sprite="<?php echo $sprite_url; ?>"
+                        data-nickname="<?php echo htmlspecialchars($row['nickname']); ?>"
+                        data-species="<?php echo htmlspecialchars($row['species_name'] ?? '???'); ?>"
                         data-level="Lv<?php echo htmlspecialchars($row['level']); ?>"
                         data-trainer="<?php echo htmlspecialchars($row['username']); ?>"
-                        data-type="<?php echo htmlspecialchars($row['type']); ?>"
-                        data-status="<?php echo htmlspecialchars($row['status']); ?>"
+                        data-gender="<?php echo $gender_icon . ' ' . htmlspecialchars($row['gender']); ?>"
                         data-upvotes="▲ <?php echo htmlspecialchars($row['upvotes']); ?>"
-                        data-id="<?php echo $row['id']; ?>"
-                        data-owner="<?php echo $row['user_id']; ?>">
-                        <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
+                        data-id="<?php echo $row['id']; ?>">
+                        <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['nickname']); ?>">
                     </div>
                 <?php } ?>
             </div>
@@ -97,22 +105,23 @@ function updateDetails(element) {
 
     document.getElementById('empty-state').style.display = 'none';
     document.getElementById('detail-content').style.display = 'block';
-    
-    const imgElement = document.getElementById('detail-img');
-    imgElement.style.display = 'block';
-    imgElement.src = element.getAttribute('data-img');
 
-    document.getElementById('detail-name').innerText = element.getAttribute('data-name');
-    document.getElementById('detail-level').innerText = element.getAttribute('data-level');
-    document.getElementById('detail-trainer').innerText = element.getAttribute('data-trainer');
-    document.getElementById('detail-type').innerText = element.getAttribute('data-type');
-    document.getElementById('detail-status').innerText = element.getAttribute('data-status');
-    document.getElementById('detail-upvotes').innerText = element.getAttribute('data-upvotes');
+    const sprite = document.getElementById('detail-sprite');
+    sprite.src = element.getAttribute('data-sprite');
+    sprite.style.display = 'inline-block';
 
-    const pokemonId = element.getAttribute('data-id');
+    const thumb = document.getElementById('detail-thumbnail');
+    thumb.src = element.getAttribute('data-thumbnail');
+    thumb.style.display = 'block';
 
-    document.getElementById('btn-upvote').href =
-        'upvote.php?id=' + pokemonId;
+    document.getElementById('detail-nickname').innerText  = element.getAttribute('data-nickname');
+    document.getElementById('detail-species').innerText   = element.getAttribute('data-species');
+    document.getElementById('detail-level').innerText     = element.getAttribute('data-level');
+    document.getElementById('detail-trainer').innerText   = element.getAttribute('data-trainer');
+    document.getElementById('detail-gender').innerText    = element.getAttribute('data-gender');
+    document.getElementById('detail-upvotes').innerText   = element.getAttribute('data-upvotes');
+
+    document.getElementById('btn-upvote').href = 'upvote.php?id=' + element.getAttribute('data-id');
 }
 </script>
 </body>
