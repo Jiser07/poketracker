@@ -15,32 +15,22 @@ $sql = "SELECT * FROM pokemon
         AND user_id='{$_SESSION['user_id']}'";
 
 $result = mysqli_query($conn, $sql);
-
 $pokemon = mysqli_fetch_assoc($result);
 
 if (!$pokemon) {
     die("Pokémon not found.");
 }
 
-?>
-
-<?php
-
 if (isset($_POST['update_pokemon'])) {
-
-    $name = $_POST['name'];
-    $type = $_POST['type'];
+    $nickname = $_POST['nickname'];
     $level = $_POST['level'];
-    $status = $_POST['status'];
 
     if ($level < 1 || $level > 100) {
-    echo "Level must be between 1 and 100.";
+        echo "Level must be between 1 and 100.";
     } else {
         $update_sql = "UPDATE pokemon SET
-            name='$name',
-            type='$type',
-            level='$level',
-            status='$status'
+            nickname='$nickname',
+            level='$level'
             WHERE id='$id'";
 
         if (mysqli_query($conn, $update_sql)) {
@@ -65,30 +55,18 @@ if (isset($_POST['update_pokemon'])) {
 
 <form method="POST">
 
+    <label>Nickname:</label>
     <input type="text"
-            name="name"
-            value="<?php echo $pokemon['name']; ?>"
+            name="nickname"
+            value="<?php echo htmlspecialchars($pokemon['nickname']); ?>"
             required>
 
     <br><br>
 
-    <input type="text"
-            name="type"
-            value="<?php echo $pokemon['type']; ?>"
-            required>
-
-    <br><br>
-
+    <label>Level (1-100):</label>
     <input type="number"
             name="level"
             value="<?php echo $pokemon['level']; ?>"
-            required>
-
-    <br><br>
-
-    <input type="text"
-            name="status"
-            value="<?php echo $pokemon['status']; ?>"
             required>
 
     <br><br>
