@@ -21,23 +21,15 @@ $result = mysqli_query($conn, $sql);
 
 <div class="navbar">
     <h1>PokéTracker</h1>
-
     <div class="nav-links">
-
         <a href="index.php">Home</a>
-
         <?php if (isset($_SESSION['user_id'])) { ?>
-
             <a href="dashboard.php">Trainer Card</a>
-
             <a href="collection.php">My PC Box</a>
-
+            <a href="add-pokemon.php">Add PKMN</a>
             <a href="leaderboard.php">Leaderboard</a>
-
             <a href="auth/logout.php">Logout</a>
-
         <?php } ?>
-
     </div>
 </div>
 
