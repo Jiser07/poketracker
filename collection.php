@@ -50,6 +50,10 @@ $result = mysqli_query($conn, $sql);
         <div class="pc-info-panel">
             <div class="panel-header">- PKMN DATA -</div>
 
+            <div class="sprite-box">
+                <img id="detail-thumbnail" src="" alt="Thumbnail" style="display:none; max-width:100%; border-radius:6px;">
+            </div>
+
             <div class="info-content" id="detail-content" style="display:none;">
                 <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;">
                     <img id="detail-sprite" src="" alt="Sprite" style="display:none; image-rendering:pixelated; width:64px; height:64px; flex-shrink:0;">
@@ -61,10 +65,6 @@ $result = mysqli_query($conn, $sql);
                 <p id="detail-level" class="pkmn-level"></p>
                 <div class="stat-row"><span class="label">GENDER</span><span id="detail-gender" class="val"></span></div>
                 <div class="stat-row"><span class="label">UPVOTES</span><span id="detail-upvotes" class="val"></span></div>
-
-                <div class="sprite-box" style="margin-top:10px;">
-                    <img id="detail-thumbnail" src="" alt="Thumbnail" style="display:none; max-width:100%; border-radius:6px;">
-                </div>
 
                 <div class="action-buttons">
                     <a id="btn-edit" href="#" class="btn-pc">EDIT</a>
