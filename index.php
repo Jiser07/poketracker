@@ -47,6 +47,8 @@ $result = mysqli_query($conn, $sql);
                 <h3 id="detail-name" class="pkmn-name"></h3>
                 <p id="detail-level" class="pkmn-level"></p>
                 <div class="stat-row"><span class="label">TRAINER</span><span id="detail-trainer" class="val"></span></div>
+                <div class="stat-row"><span class="label">TYPE</span><span id="detail-type" class="val"></span></div>
+                <div class="stat-row"><span class="label">STATUS</span><span id="detail-status" class="val"></span></div>
                 <div class="stat-row"><span class="label">UPVOTES</span><span id="detail-upvotes" class="val"></span></div>
                 
                 <div class="action-buttons">
@@ -72,13 +74,15 @@ $result = mysqli_query($conn, $sql);
                     <div class="pc-pokemon-slot" 
                         onclick="updateDetails(this)"
                         data-img="uploads/<?php echo htmlspecialchars($row['image']); ?>"
-                        data-name="<?php echo htmlspecialchars($row['nickname']); ?>"
+                        data-name="<?php echo htmlspecialchars($row['name']); ?>"
                         data-level="Lv<?php echo htmlspecialchars($row['level']); ?>"
                         data-trainer="<?php echo htmlspecialchars($row['username']); ?>"
+                        data-type="<?php echo htmlspecialchars($row['type']); ?>"
+                        data-status="<?php echo htmlspecialchars($row['status']); ?>"
                         data-upvotes="▲ <?php echo htmlspecialchars($row['upvotes']); ?>"
                         data-id="<?php echo $row['id']; ?>"
                         data-owner="<?php echo $row['user_id']; ?>">
-                        <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['nickname']); ?>">
+                        <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>" alt="<?php echo htmlspecialchars($row['name']); ?>">
                     </div>
                 <?php } ?>
             </div>
