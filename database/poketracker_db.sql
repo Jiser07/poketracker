@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 01, 2026 at 09:59 PM
+-- Generation Time: Jun 01, 2026 at 10:29 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -44,7 +44,8 @@ CREATE TABLE `pokemon` (
 --
 
 INSERT INTO `pokemon` (`id`, `user_id`, `nickname`, `level`, `gender`, `image`, `created_at`, `upvotes`, `species_id`) VALUES
-(14, 1, 'Bulbasaur', 1, 'Female', '1780343502_649793951_2484185198702561_5155173347306209027_n.jpg', '2026-06-01 19:51:42', 1, 1);
+(14, 1, 'Gyarubasaur', 1, 'Female', '1780343502_649793951_2484185198702561_5155173347306209027_n.jpg', '2026-06-01 19:51:42', 1, 1),
+(15, 1, '', 41, 'Male', '1780345481_images.jpg', '2026-06-01 20:24:41', 0, 448);
 
 -- --------------------------------------------------------
 
@@ -704,7 +705,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `pokemon`
 --
 ALTER TABLE `pokemon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
 
 --
 -- AUTO_INCREMENT for table `pokemon_votes`
