@@ -113,8 +113,17 @@ function updateDetails(element) {
     const thumb = document.getElementById('detail-thumbnail');
     thumb.src = element.getAttribute('data-thumbnail');
     thumb.style.display = 'block';
-    document.getElementById('detail-nickname').innerText  = element.getAttribute('data-nickname');
-    document.getElementById('detail-species').innerText   = element.getAttribute('data-species');
+    const nickname = element.getAttribute('data-nickname');
+    const species  = element.getAttribute('data-species');
+    if (nickname) {
+        document.getElementById('detail-nickname').innerText = nickname;
+        document.getElementById('detail-species').innerText  = species;
+        document.getElementById('detail-species').style.display = '';
+    } else {
+        document.getElementById('detail-nickname').innerText = species;
+        document.getElementById('detail-species').innerText  = '';
+        document.getElementById('detail-species').style.display = 'none';
+    }
     document.getElementById('detail-level').innerText     = element.getAttribute('data-level');
     document.getElementById('detail-trainer').innerText   = element.getAttribute('data-trainer');
     document.getElementById('detail-gender').innerText    = element.getAttribute('data-gender');
