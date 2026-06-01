@@ -30,6 +30,7 @@ $started_date = date("M. d, Y");
         <a href="dashboard.php">Trainer Card</a>
         <a href="collection.php">My PC Box</a>
         <a href="add-pokemon.php">Add PKMN</a>
+        <a href="leaderboard.php">Leaderboard</a>
         <a href="auth/logout.php" onclick="return confirm('Logout?')">Logout</a>
     </div>
 </div>
