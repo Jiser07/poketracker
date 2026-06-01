@@ -5,6 +5,7 @@ include 'includes/connection.php';
 $sql = "SELECT pokemon.*, users.username
         FROM pokemon
         JOIN users ON pokemon.user_id = users.id
+        WHERE upvotes > 0
         ORDER BY upvotes DESC
         LIMIT 10";
 
