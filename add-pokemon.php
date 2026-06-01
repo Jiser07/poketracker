@@ -18,7 +18,7 @@ while ($row = mysqli_fetch_assoc($dex_result)) {
 
 if (isset($_POST['add_pokemon'])) {
     $user_id = $_SESSION['user_id'];
-    $nickname = trim($_POST['nickname']);
+    $nickname   = trim($_POST['nickname']) ?: '';
     $level    = trim($_POST['level']);
     $gender   = trim($_POST['gender']);
     $species_id = trim($_POST['species_id']);
@@ -138,7 +138,7 @@ if (isset($_POST['add_pokemon'])) {
     </div>
 
     <label>Nickname:</label>
-    <input type="text" name="nickname" id="nickname-input" placeholder="e.g. Sparky" required>
+    <input type="text" name="nickname" id="nickname-input" placeholder="Leave blank to use species name">
 
     <label>Level (1-100):</label>
     <input type="number" name="level" min="1" max="100" placeholder="Lv." required>
@@ -205,8 +205,6 @@ function selectSpecies(p) {
     speciesLabel.textContent = `#${String(p.id).padStart(4,'0')} ${label.toUpperCase()}`;
     row.style.display = 'flex';
 
-    // Pre-fill nickname with species name if empty
-    if (!nicknameInput.value) nicknameInput.value = p.name;
 }
 
 document.addEventListener('click', function (e) {
