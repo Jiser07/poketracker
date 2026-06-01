@@ -37,59 +37,32 @@ $result = mysqli_query($conn, $sql);
 <div class="container">
 
     <h2>🏆 Pokémon Hall of Fame</h2>
-
     <p>Top Pokémon ranked by community upvotes.</p>
 
     <?php
     $rank = 1;
-
     while ($row = mysqli_fetch_assoc($result)) {
     ?>
 
     <div class="pokemon-card">
-
         <h2>
             <?php
-            if ($rank == 1) {
-                echo "🥇";
-            } elseif ($rank == 2) {
-                echo "🥈";
-            } elseif ($rank == 3) {
-                echo "🥉";
-            } else {
-                echo "#".$rank;
-            }
+            if ($rank == 1) echo "🥇";
+            elseif ($rank == 2) echo "🥈";
+            elseif ($rank == 3) echo "🥉";
+            else echo "#".$rank;
             ?>
-            <?php echo htmlspecialchars($row['name']); ?>
+            <?php echo htmlspecialchars($row['nickname']); ?>
         </h2>
 
         <img src="uploads/<?php echo htmlspecialchars($row['image']); ?>">
 
-        <p>
-            Trainer:
-            <?php echo htmlspecialchars($row['username']); ?>
-        </p>
-
-        <p>
-            Type:
-            <?php echo htmlspecialchars($row['type']); ?>
-        </p>
-
-        <p>
-            Level:
-            <?php echo htmlspecialchars($row['level']); ?>
-        </p>
-
-        <p>
-            ▲ <?php echo $row['upvotes']; ?> Upvotes
-        </p>
-
+        <p>Trainer: <?php echo htmlspecialchars($row['username']); ?></p>
+        <p>Level: <?php echo htmlspecialchars($row['level']); ?></p>
+        <p>▲ <?php echo $row['upvotes']; ?> Upvotes</p>
     </div>
 
-    <?php
-    $rank++;
-    }
-    ?>
+    <?php $rank++; } ?>
 
 </div>
 
