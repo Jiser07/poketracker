@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 01, 2026 at 10:29 PM
+-- Generation Time: Jun 01, 2026 at 10:38 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -44,8 +44,8 @@ CREATE TABLE `pokemon` (
 --
 
 INSERT INTO `pokemon` (`id`, `user_id`, `nickname`, `level`, `gender`, `image`, `created_at`, `upvotes`, `species_id`) VALUES
-(14, 1, 'Gyarubasaur', 1, 'Female', '1780343502_649793951_2484185198702561_5155173347306209027_n.jpg', '2026-06-01 19:51:42', 1, 1),
-(15, 1, '', 41, 'Male', '1780345481_images.jpg', '2026-06-01 20:24:41', 0, 448);
+(15, 1, '', 41, 'Male', '1780345481_images.jpg', '2026-06-01 20:24:41', 0, 448),
+(16, 1, 'butiki', 21, 'Male', '1780345965_70e4122c5c9ad3953bf4c4de90fa6da2.jpg', '2026-06-01 20:32:45', 0, 4);
 
 -- --------------------------------------------------------
 
@@ -636,13 +636,6 @@ CREATE TABLE `pokemon_votes` (
   `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `pokemon_votes`
---
-
-INSERT INTO `pokemon_votes` (`id`, `pokemon_id`, `user_id`) VALUES
-(4, 14, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -705,7 +698,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `pokemon`
 --
 ALTER TABLE `pokemon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `pokemon_votes`
