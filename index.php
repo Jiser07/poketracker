@@ -5,7 +5,7 @@ include 'includes/connection.php';
 $sql = "SELECT pokemon.*, users.username, pokemon_dex.name AS species_name, pokemon_dex.sprite AS species_sprite
         FROM pokemon
         JOIN users ON pokemon.user_id = users.id
-        LEFT JOIN pokemon_dex ON pokemon.species_id = pokemon_dex.id
+        LEFT JOIN pokemon_dex ON pokemon.species_id = pokemon_dex.id AND (pokemon_dex.form = '' OR pokemon_dex.form IS NULL)
         ORDER BY pokemon.created_at DESC";
 
 $result = mysqli_query($conn, $sql);

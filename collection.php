@@ -11,7 +11,7 @@ $search  = isset($_GET['search']) ? $_GET['search'] : "";
 
 $sql = "SELECT pokemon.*, pokemon_dex.name AS species_name, pokemon_dex.sprite AS species_sprite
         FROM pokemon
-        LEFT JOIN pokemon_dex ON pokemon.species_id = pokemon_dex.id
+        LEFT JOIN pokemon_dex ON pokemon.species_id = pokemon_dex.id AND (pokemon_dex.form = '' OR pokemon_dex.form IS NULL)
         WHERE pokemon.user_id='$user_id' AND pokemon.nickname LIKE '%$search%'
         ORDER BY pokemon.created_at DESC";
 
