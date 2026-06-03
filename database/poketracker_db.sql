@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1
--- Generation Time: Jun 01, 2026 at 11:11 PM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- Host: 127.0.0.1:3306
+-- Generation Time: Jun 03, 2026 at 11:50 AM
+-- Server version: 8.4.7
+-- PHP Version: 8.3.28
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -27,25 +27,30 @@ SET time_zone = "+00:00";
 -- Table structure for table `pokemon`
 --
 
-CREATE TABLE `pokemon` (
-  `id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `nickname` varchar(255) DEFAULT NULL,
-  `level` int(11) DEFAULT NULL,
-  `gender` varchar(10) NOT NULL DEFAULT 'Male',
-  `image` varchar(255) DEFAULT NULL,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `upvotes` int(11) DEFAULT 0,
-  `species_id` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `pokemon`;
+CREATE TABLE IF NOT EXISTS `pokemon` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
+  `nickname` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `level` int DEFAULT NULL,
+  `gender` varchar(10) COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'Male',
+  `image` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `upvotes` int DEFAULT '0',
+  `species_id` int DEFAULT NULL,
+  `description` varchar(255) COLLATE utf8mb4_general_ci DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `pokemon`
 --
 
-INSERT INTO `pokemon` (`id`, `user_id`, `nickname`, `level`, `gender`, `image`, `created_at`, `upvotes`, `species_id`) VALUES
-(15, 1, '', 41, 'Male', '1780345481_images.jpg', '2026-06-01 20:24:41', 0, 448),
-(16, 1, 'butiki', 21, 'Male', '1780345965_70e4122c5c9ad3953bf4c4de90fa6da2.jpg', '2026-06-01 20:32:45', 0, 4);
+INSERT INTO `pokemon` (`id`, `user_id`, `nickname`, `level`, `gender`, `image`, `created_at`, `upvotes`, `species_id`, `description`) VALUES
+(15, 1, '', 41, 'Male', '1780345481_images.jpg', '2026-06-01 20:24:41', 1, 448, ''),
+(16, 1, 'butiki', 21, 'Male', '1780345965_70e4122c5c9ad3953bf4c4de90fa6da2.jpg', '2026-06-01 20:32:45', 1, 4, ''),
+(18, 5, 'Miffyy', 67, 'Female', '1780476366_miffy.jpg', '2026-06-03 08:46:06', 1, 40, 'eeeee');
 
 -- --------------------------------------------------------
 
@@ -53,7 +58,8 @@ INSERT INTO `pokemon` (`id`, `user_id`, `nickname`, `level`, `gender`, `image`, 
 -- Table structure for table `pokemon_dex`
 --
 
-CREATE TABLE `pokemon_dex` (
+DROP TABLE IF EXISTS `pokemon_dex`;
+CREATE TABLE IF NOT EXISTS `pokemon_dex` (
   `id` varchar(4) DEFAULT NULL,
   `name` varchar(16) DEFAULT NULL,
   `form` varchar(22) DEFAULT NULL,
@@ -68,7 +74,7 @@ CREATE TABLE `pokemon_dex` (
   `speed` varchar(5) DEFAULT NULL,
   `generation` varchar(10) DEFAULT NULL,
   `sprite` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Dumping data for table `pokemon_dex`
@@ -1299,11 +1305,24 @@ INSERT INTO `pokemon_dex` (`id`, `name`, `form`, `type1`, `type2`, `total`, `hp`
 -- Table structure for table `pokemon_votes`
 --
 
-CREATE TABLE `pokemon_votes` (
-  `id` int(11) NOT NULL,
-  `pokemon_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `pokemon_votes`;
+CREATE TABLE IF NOT EXISTS `pokemon_votes` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `pokemon_id` int NOT NULL,
+  `user_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_vote` (`pokemon_id`,`user_id`),
+  KEY `user_id` (`user_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pokemon_votes`
+--
+
+INSERT INTO `pokemon_votes` (`id`, `pokemon_id`, `user_id`) VALUES
+(6, 15, 4),
+(5, 16, 4),
+(16, 18, 5);
 
 -- --------------------------------------------------------
 
@@ -1311,12 +1330,15 @@ CREATE TABLE `pokemon_votes` (
 -- Table structure for table `users`
 --
 
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `username` varchar(100) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `role` varchar(20) DEFAULT 'user'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+DROP TABLE IF EXISTS `users`;
+CREATE TABLE IF NOT EXISTS `users` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
+  `password` varchar(255) COLLATE utf8mb4_general_ci NOT NULL,
+  `role` varchar(20) COLLATE utf8mb4_general_ci DEFAULT 'user',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
@@ -1326,54 +1348,6 @@ INSERT INTO `users` (`id`, `username`, `password`, `role`) VALUES
 (1, 'hatdog', '$2y$10$tq8cMtmf0F533gUJjsqM0uQUP.fZo8o2tt1DYA0O3i.kZEmos1Wf6', 'user'),
 (4, 'jhayzer07', '$2y$10$2JgWJ4at9tXU7/36Q/2um.yFjA2qGyB.yPrf34ochRRmzhkDL4BS.', 'user'),
 (5, 'jhayzordex', '$2y$10$F.YlOihx2OlK9vDdgzg6sOFbhqLxxUnQdBzNvpxYhLEmgLYXJAknm', 'user');
-
---
--- Indexes for dumped tables
---
-
---
--- Indexes for table `pokemon`
---
-ALTER TABLE `pokemon`
-  ADD PRIMARY KEY (`id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `pokemon_votes`
---
-ALTER TABLE `pokemon_votes`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_vote` (`pokemon_id`,`user_id`),
-  ADD KEY `user_id` (`user_id`);
-
---
--- Indexes for table `users`
---
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `username` (`username`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `pokemon`
---
-ALTER TABLE `pokemon`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
-
---
--- AUTO_INCREMENT for table `pokemon_votes`
---
-ALTER TABLE `pokemon_votes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- Constraints for dumped tables

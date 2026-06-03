@@ -8,7 +8,7 @@ if (!isset($_SESSION['user_id'])) {
 
 include 'includes/connection.php';
 
-$id = $_GET['id'];
+$id = mysqli_real_escape_string($conn, $_GET['id']);
 
 $sql = "SELECT pokemon.*, pokemon_dex.name AS species_name
         FROM pokemon
@@ -34,10 +34,13 @@ $sys_message = "";
 $msg_type = "";
 
 if (isset($_POST['update_pokemon'])) {
-    $nickname   = trim($_POST['nickname']);
-    $level      = trim($_POST['level']);
-    $gender     = trim($_POST['gender']);
-    $species_id = trim($_POST['species_id']);
+    
+    // Escaped variables to prevent any database crashes when saving punctuation
+    $nickname    = mysqli_real_escape_string($conn, trim($_POST['nickname']));
+    $level       = mysqli_real_escape_string($conn, trim($_POST['level']));
+    $gender      = mysqli_real_escape_string($conn, trim($_POST['gender']));
+    $species_id  = mysqli_real_escape_string($conn, trim($_POST['species_id']));
+    $description = mysqli_real_escape_string($conn, trim($_POST['description']) ?: ''); 
 
     if ($level < 1 || $level > 100) {
         $sys_message = "Level must be between 1 and 100.";
@@ -76,6 +79,7 @@ if (isset($_POST['update_pokemon'])) {
                 level='$level',
                 gender='$gender',
                 species_id='$species_id',
+                description='$description',
                 image='{$pokemon['image']}'
                 WHERE id='$id'";
 
@@ -93,43 +97,8 @@ if (isset($_POST['update_pokemon'])) {
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Edit Pokémon</title>
+    <title>Edit Pokémon - PC System</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        .sys-message {
-            background: var(--dialogue-bg); border: 4px solid var(--dialogue-border-outer);
-            border-radius: 8px; box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px var(--dialogue-border-inner), 4px 4px 0 rgba(0,0,0,0.15);
-            max-width: 500px; margin: 0 auto 24px auto; padding: 16px 24px; font-size: 0.8rem; line-height: 1.6;
-        }
-        .sys-message.error   { color: var(--gba-red);   text-shadow: 1px 1px 0 #ffb0b0; }
-        .sys-message.success { color: var(--gba-green); text-shadow: 1px 1px 0 #d0f0c0; }
-        .form-title {
-            margin-top: 0; margin-bottom: 24px; font-size: 1rem; text-align: center; color: var(--gba-text);
-            text-shadow: 2px 2px 0 var(--gba-text-shadow); border-bottom: 4px dotted var(--dialogue-border-inner); padding-bottom: 16px;
-        }
-        .species-search-wrap { position: relative; margin-bottom: 8px; }
-        #species-search { width: 100%; box-sizing: border-box; }
-        #species-dropdown {
-            display: none; position: absolute; z-index: 100; background: var(--dialogue-bg);
-            border: 3px solid var(--dialogue-border-outer); border-radius: 6px;
-            max-height: 200px; overflow-y: auto; width: 100%; box-sizing: border-box;
-            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
-        }
-        .species-option {
-            padding: 6px 12px; cursor: pointer; font-size: 0.8rem; color: var(--gba-text);
-            border-bottom: 1px solid var(--dialogue-border-inner);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .species-option:hover { background: var(--dialogue-border-inner); }
-        .species-option img { image-rendering: pixelated; width: 32px; height: 32px; flex-shrink: 0; }
-        .selected-species-row {
-            display: none; align-items: center; gap: 10px; margin: 8px 0 12px;
-        }
-        .selected-species-row img { image-rendering: pixelated; width: 64px; height: 64px; }
-        .selected-species-name { font-size: 0.8rem; color: var(--gba-text); }
-        .current-image { margin: 8px 0; }
-        .current-image img { max-width: 120px; border-radius: 6px; display: block; margin-bottom: 6px; }
-    </style>
 </head>
 <body>
 
@@ -162,6 +131,7 @@ if (isset($_POST['update_pokemon'])) {
                value="<?php echo htmlspecialchars($pokemon['species_name'] ?? ''); ?>">
         <div id="species-dropdown"></div>
     </div>
+    
     <div class="selected-species-row" id="selected-species-row">
         <img id="sprite-preview-img" src="assets/sprites/<?php echo $pokemon['species_id']; ?>.png" alt="">
         <span class="selected-species-name" id="selected-species-name"><?php echo htmlspecialchars($pokemon['species_name'] ?? ''); ?></span>
@@ -179,10 +149,14 @@ if (isset($_POST['update_pokemon'])) {
         <option value="Female" <?php if ($pokemon['gender'] === 'Female') echo 'selected'; ?>>♀ Female</option>
     </select>
 
+    <!-- NEW: Multi-line Textarea pre-populated safely inside the tags -->
+    <label>Description / Journal Entry <span style="font-size:0.6rem; opacity:0.7; font-weight:normal;">(Max 150 Chars)</span>:</label>
+    <textarea name="description" placeholder="Write a description or catch journal entry here... Numbers & symbols allowed!" rows="4" maxlength="150"><?php echo htmlspecialchars($pokemon['description'] ?? ''); ?></textarea>
+
     <label>Thumbnail Image:</label>
-    <div class="current-image">
-        <img src="uploads/<?php echo htmlspecialchars($pokemon['image']); ?>" alt="Current thumbnail">
-        <small>Current image — upload a new one to replace it</small>
+    <div style="margin-bottom: 12px; display:flex; align-items:center; gap: 12px;">
+        <img src="uploads/<?php echo htmlspecialchars($pokemon['image']); ?>" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px; border: 2px solid #555;" alt="Current Thumbnail">
+        <span style="font-size:0.65rem; opacity:0.7;">Current Photo — upload a new one to replace it</span>
     </div>
     <input type="file" name="image" accept=".jpg,.jpeg,.png">
 

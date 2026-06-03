@@ -18,10 +18,13 @@ while ($row = mysqli_fetch_assoc($dex_result)) {
 
 if (isset($_POST['add_pokemon'])) {
     $user_id = $_SESSION['user_id'];
-    $nickname   = trim($_POST['nickname']) ?: '';
-    $level    = trim($_POST['level']);
-    $gender   = trim($_POST['gender']);
-    $species_id = trim($_POST['species_id']);
+    
+    // Escaped variables to prevent any punctuation/apostrophe syntax crashes
+    $nickname    = mysqli_real_escape_string($conn, trim($_POST['nickname']) ?: '');
+    $level       = mysqli_real_escape_string($conn, trim($_POST['level']));
+    $gender      = mysqli_real_escape_string($conn, trim($_POST['gender']));
+    $species_id  = mysqli_real_escape_string($conn, trim($_POST['species_id']));
+    $description = mysqli_real_escape_string($conn, trim($_POST['description']) ?: ''); 
 
     if ($level < 1 || $level > 100) {
         $sys_message = "Level must be between 1 and 100.";
@@ -45,8 +48,8 @@ if (isset($_POST['add_pokemon'])) {
             $folder = "uploads/" . $image_name;
             move_uploaded_file($temp_name, $folder);
 
-            $sql = "INSERT INTO pokemon (user_id, nickname, level, gender, species_id, upvotes, image)
-                    VALUES ('$user_id', '$nickname', '$level', '$gender', '$species_id', '0', '$image_name')";
+            $sql = "INSERT INTO pokemon (user_id, nickname, level, gender, species_id, upvotes, image, description)
+                    VALUES ('$user_id', '$nickname', '$level', '$gender', '$species_id', '0', '$image_name', '$description')";
 
             if (mysqli_query($conn, $sql)) {
                 $sys_message = "PKMN data registered to PC successfully!";
@@ -64,43 +67,6 @@ if (isset($_POST['add_pokemon'])) {
 <head>
     <title>Add Pokémon - PC System</title>
     <link rel="stylesheet" href="assets/css/style.css">
-    <style>
-        .sys-message {
-            background: var(--dialogue-bg); border: 4px solid var(--dialogue-border-outer);
-            border-radius: 8px; box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px var(--dialogue-border-inner), 4px 4px 0 rgba(0,0,0,0.15);
-            max-width: 500px; margin: 0 auto 24px auto; padding: 16px 24px; font-size: 0.8rem; line-height: 1.6;
-        }
-        .sys-message.error   { color: var(--gba-red);   text-shadow: 1px 1px 0 #ffb0b0; }
-        .sys-message.success { color: var(--gba-green); text-shadow: 1px 1px 0 #d0f0c0; }
-        .form-title {
-            margin-top: 0; margin-bottom: 24px; font-size: 1rem; text-align: center; color: var(--gba-text);
-            text-shadow: 2px 2px 0 var(--gba-text-shadow); border-bottom: 4px dotted var(--dialogue-border-inner); padding-bottom: 16px;
-        }
-        .species-search-wrap { position: relative; margin-bottom: 8px; }
-        #species-search {
-            width: 100%; box-sizing: border-box;
-        }
-        #species-dropdown {
-            display: none; position: absolute; z-index: 100; background: var(--dialogue-bg);
-            border: 3px solid var(--dialogue-border-outer); border-radius: 6px;
-            max-height: 200px; overflow-y: auto; width: 100%; box-sizing: border-box;
-            box-shadow: 4px 4px 0 rgba(0,0,0,0.2);
-        }
-        .species-option {
-            padding: 6px 12px; cursor: pointer; font-size: 0.8rem; color: var(--gba-text);
-            border-bottom: 1px solid var(--dialogue-border-inner);
-            display: flex; align-items: center; gap: 8px;
-        }
-        .species-option:hover { background: var(--dialogue-border-inner); }
-        .species-option img { image-rendering: pixelated; width: 32px; height: 32px; flex-shrink: 0; }
-        .selected-species-row {
-            display: none; align-items: center; gap: 10px; margin: 8px 0 12px;
-        }
-        .selected-species-row img { image-rendering: pixelated; width: 64px; height: 64px; }
-        .selected-species-name {
-            font-size: 0.8rem; color: var(--gba-text);
-        }
-    </style>
 </head>
 <body>
 
@@ -149,6 +115,10 @@ if (isset($_POST['add_pokemon'])) {
         <option value="Male">♂ Male</option>
         <option value="Female">♀ Female</option>
     </select>
+
+    <!-- NEW: Multi-line Textarea with explicit character limits in the label -->
+    <label>Description / Journal Entry <span style="font-size:0.6rem; opacity:0.7; font-weight:normal;">(Max 150 Chars)</span>:</label>
+    <textarea name="description" placeholder="Write a description here... " rows="4" maxlength="150"></textarea>
 
     <label>Thumbnail Image:</label>
     <input type="file" name="image" accept=".jpg,.jpeg,.png" required>
@@ -204,7 +174,6 @@ function selectSpecies(p) {
     spriteImg.src = `assets/sprites/${p.id}.png`;
     speciesLabel.textContent = `#${String(p.id).padStart(4,'0')} ${label.toUpperCase()}`;
     row.style.display = 'flex';
-
 }
 
 document.addEventListener('click', function (e) {
