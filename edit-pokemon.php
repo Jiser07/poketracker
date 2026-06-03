@@ -35,8 +35,8 @@ $msg_type = "";
 
 if (isset($_POST['update_pokemon'])) {
     
-    // Escaped variables to prevent any database crashes when saving punctuation
-    $nickname    = mysqli_real_escape_string($conn, trim($_POST['nickname']));
+    // Captured nickname with falling back to empty string safely
+    $nickname    = mysqli_real_escape_string($conn, trim($_POST['nickname']) ?: '');
     $level       = mysqli_real_escape_string($conn, trim($_POST['level']));
     $gender      = mysqli_real_escape_string($conn, trim($_POST['gender']));
     $species_id  = mysqli_real_escape_string($conn, trim($_POST['species_id']));
@@ -137,8 +137,9 @@ if (isset($_POST['update_pokemon'])) {
         <span class="selected-species-name" id="selected-species-name"><?php echo htmlspecialchars($pokemon['species_name'] ?? ''); ?></span>
     </div>
 
+    <!-- Nickname input is no longer "required" -->
     <label>Nickname:</label>
-    <input type="text" name="nickname" value="<?php echo htmlspecialchars($pokemon['nickname']); ?>" required>
+    <input type="text" name="nickname" value="<?php echo htmlspecialchars($pokemon['nickname']); ?>" placeholder="Leave blank to use species name">
 
     <label>Level (1-100):</label>
     <input type="number" name="level" min="1" max="100" value="<?php echo $pokemon['level']; ?>" required>
@@ -149,7 +150,6 @@ if (isset($_POST['update_pokemon'])) {
         <option value="Female" <?php if ($pokemon['gender'] === 'Female') echo 'selected'; ?>>♀ Female</option>
     </select>
 
-    <!-- NEW: Multi-line Textarea pre-populated safely inside the tags -->
     <label>Description / Journal Entry <span style="font-size:0.6rem; opacity:0.7; font-weight:normal;">(Max 150 Chars)</span>:</label>
     <textarea name="description" placeholder="Write a description or catch journal entry here... Numbers & symbols allowed!" rows="4" maxlength="150"><?php echo htmlspecialchars($pokemon['description'] ?? ''); ?></textarea>
 

@@ -189,7 +189,7 @@ img {
 /* Left Panel Header row & contents */
 .detail-thumbnail-img { display:none; max-width:100%; border-radius:6px; }
 .detail-header-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
-.detail-sprite-img { display:none; image-rendering:pixelated; width:64px; height:64px; flex-shrink:0; }
+.detail-sprite-img { display:none; image-rendering:pixelated; width:90px; height:90px; flex-shrink:0; }
 .pkmn-name-row { margin:0; }
 .pkmn-species-info { font-size:0.65rem; opacity:0.8; margin: 4px 0 0 0; }
 .detail-types-container { margin-bottom: 12px; display: flex; gap: 6px; }
@@ -508,8 +508,8 @@ form button:hover { background: #88d860; }
 
 /* Circular Image Frame */
 .hof-sprite-box { 
-    width: 90px; 
-    height: 90px; 
+    width: 110px; 
+    height: 110px; 
     background: #fff; 
     border: 4px solid var(--hof-bg); 
     border-radius: 50%; 
@@ -540,17 +540,22 @@ form button:hover { background: #88d860; }
     align-items: center;
     gap: 8px;
     background: rgba(255, 255, 255, 0.6);
-    padding: 4px 10px;
-    border-radius: 20px;
+    padding: 4px 14px 4px 6px; /* Tightened left padding to accommodate zoomed sprite */
+    border-radius: 28px;
     border: 2px solid #c0c0c0;
     margin-bottom: 10px;
     box-shadow: inset 1px 1px 0 #fff;
+    height: 50px;       /* Fixed height to keep all capsules perfectly identical */
+    overflow: hidden;   /* Cookie-cutter clip to keep large sprites contained */
 }
 
 .hof-species-tag img {
-    width: 24px;
-    height: 24px;
-    image-rendering: pixelated;
+    width: 48px;        /* Enlarged standard image canvas */
+    height: 48px;       /* Enlarged standard image canvas */
+    object-fit: contain;
+    image-rendering: pixelated; 
+    flex-shrink: 0;
+    margin: 0px -2px 0px -6px; /* Negative margins pull the zoomed sprite center-stage */
 }
 
 .hof-species-tag span {
