@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Jun 03, 2026 at 11:50 AM
+-- Generation Time: Jun 03, 2026 at 03:13 PM
 -- Server version: 8.4.7
 -- PHP Version: 8.3.28
 
@@ -41,16 +41,17 @@ CREATE TABLE IF NOT EXISTS `pokemon` (
   `description` varchar(255) COLLATE utf8mb4_general_ci DEFAULT '',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `pokemon`
 --
 
 INSERT INTO `pokemon` (`id`, `user_id`, `nickname`, `level`, `gender`, `image`, `created_at`, `upvotes`, `species_id`, `description`) VALUES
-(15, 1, '', 41, 'Male', '1780345481_images.jpg', '2026-06-01 20:24:41', 1, 448, ''),
-(16, 1, 'butiki', 21, 'Male', '1780345965_70e4122c5c9ad3953bf4c4de90fa6da2.jpg', '2026-06-01 20:32:45', 1, 4, ''),
-(18, 5, 'Miffyy', 67, 'Female', '1780476366_miffy.jpg', '2026-06-03 08:46:06', 1, 40, 'eeeee');
+(15, 1, '', 42, 'Male', '1780345481_images.jpg', '2026-06-01 20:24:41', 1, 448, ''),
+(16, 1, 'butiki', 21, 'Male', '1780345965_70e4122c5c9ad3953bf4c4de90fa6da2.jpg', '2026-06-01 20:32:45', 1, 4, 'aaaa aaaaa a a a a a a  a a a a aa a a  a a a a  a  a a a  a    a a a a a a  a a  a  a  a  a  a  a  a  a  a a a aaaaaaaaa a a  a a  a a a a  a  a  a'),
+(18, 5, 'Miffyy', 67, 'Female', '1780476366_miffy.jpg', '2026-06-03 08:46:06', 1, 40, 'eeeee'),
+(20, 1, 'gento', 100, 'Male', '1780496965_water.png', '2026-06-03 14:29:25', 0, 1000, 'dwadawdadadsa  dasdsada ada dsa dad a da d ad ad a da da d ad a da da d a da da da da d ad ad ad a d a d a da da da d as d asd a  d a da da da da d a');
 
 -- --------------------------------------------------------
 
