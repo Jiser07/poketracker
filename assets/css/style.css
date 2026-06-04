@@ -11,10 +11,17 @@
     --dialogue-border-inner: #d0d0d0;
     --pc-panel-bg: #889098;
     --pc-box-bg: #c0f890;
+    --hof-bg: #284878;      /* Hall of Fame Dark Blue Background */
+    --hof-gold: #f8d820;    /* Hall of Fame Gold #1 */
 }
 
 * {
     box-sizing: border-box;
+}
+
+/* Prevents layout shift (navbar jumping) when switching between pages */
+html {
+    overflow-y: scroll;
 }
 
 body {
@@ -28,6 +35,12 @@ body {
     background-size: 50px 50px;
     color: var(--gba-text);
     line-height: 1.5;
+}
+
+body.hof-page {
+    background-color: var(--hof-bg);
+    background-image: none;
+    color: #f8f8f8;
 }
 
 img {
@@ -57,6 +70,7 @@ img {
     position: sticky;
     top: 10px;
     z-index: 100;
+    color: var(--gba-text);
 }
 
 .navbar h1 {
@@ -67,7 +81,7 @@ img {
     text-transform: uppercase;
 }
 
-.nav-links {
+.nav-links, .nav {
     display: flex;
     gap: 24px;
     justify-content: center;
@@ -75,7 +89,17 @@ img {
     flex-wrap: wrap;
 }
 
-.nav-links a {
+.nav {
+    padding: 12px 24px;
+    background: var(--dialogue-bg);
+    border: 4px solid var(--dialogue-border-outer);
+    border-radius: 8px;
+    box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px var(--dialogue-border-inner), 4px 4px 0 rgba(0,0,0,0.15);
+    margin: 24px auto;
+    max-width: 1200px;
+}
+
+.nav-links a, .nav a {
     color: var(--gba-text);
     text-decoration: none;
     font-size: 0.75rem;
@@ -85,7 +109,7 @@ img {
     text-shadow: 2px 2px 0 var(--gba-text-shadow);
 }
 
-.nav-links a::before {
+.nav-links a::before, .nav a::before {
     content: "▶";
     position: absolute;
     left: -4px;
@@ -94,7 +118,7 @@ img {
     text-shadow: 2px 2px 0 #b04040;
 }
 
-.nav-links a:hover::before {
+.nav-links a:hover::before, .nav a:hover::before {
     opacity: 1;
 }
 
@@ -116,8 +140,10 @@ img {
     min-height: 600px;
     padding: 4px;
     margin-bottom: 40px;
+    color: var(--gba-text);
 }
 
+/* Left Panel */
 .pc-info-panel {
     width: 340px;
     background: var(--pc-panel-bg);
@@ -160,6 +186,18 @@ img {
     filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.15));
 }
 
+/* Left Panel Header row & contents */
+.detail-thumbnail-img { display:none; max-width:100%; border-radius:6px; }
+.detail-header-row { display:flex; align-items:center; gap:8px; margin-bottom:4px; }
+.detail-sprite-img { display:none; image-rendering:pixelated; width:90px; height:90px; flex-shrink:0; }
+.pkmn-name-row { margin:0; }
+.pkmn-species-info { font-size:0.65rem; opacity:0.8; margin: 4px 0 0 0; }
+.detail-types-container { margin-bottom: 12px; display: flex; gap: 6px; }
+
+/* Dynamic Gender Colors */
+.gender-male { color: #60a0d8; font-size: 0.9rem; text-shadow: 1px 1px 0 #fff; }
+.gender-female { color: #f86058; font-size: 0.9rem; text-shadow: 1px 1px 0 #fff; }
+
 .info-content {
     background: var(--dialogue-bg);
     border: 4px solid var(--dialogue-border-outer);
@@ -177,12 +215,6 @@ img {
     line-height: 2;
     font-size: 0.8rem;
     color: #606060;
-}
-
-.pkmn-name {
-    font-size: 1.1rem;
-    margin: 0 0 8px 0;
-    text-shadow: 2px 2px 0 var(--gba-text-shadow);
 }
 
 .pkmn-level {
@@ -203,6 +235,56 @@ img {
 .stat-row .label { color: #60a0d8; text-shadow: 1px 1px 0 #d8e8f8; }
 .stat-row .val { font-weight: bold; text-align: right; text-shadow: 1px 1px 0 var(--gba-text-shadow); }
 
+/* Retro Type Badges */
+.type-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.55rem;
+    text-transform: uppercase;
+    border: 1px solid rgba(0,0,0,0.5);
+    color: #fff;
+    text-shadow: 1px 1px 0 rgba(0,0,0,0.5);
+    box-shadow: inset 1px 1px 0 rgba(255,255,255,0.3);
+}
+
+/* Base Stats Toggle Button */
+.stats-toggle-btn {
+    background: #e0e8f8;
+    border: 2px solid #505050;
+    border-radius: 4px;
+    padding: 8px;
+    font-size: 0.65rem;
+    text-align: center;
+    cursor: pointer;
+    margin-top: 12px;
+    color: var(--gba-text);
+    text-shadow: 1px 1px 0 #fff;
+    box-shadow: inset 2px 2px 0 #fff, inset -2px -2px 0 #b0c0d0;
+}
+.stats-toggle-btn:hover { background: #d0d8e8; }
+.stats-toggle-btn:active { box-shadow: inset 2px 2px 0 #b0c0d0; }
+
+/* Base Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 16px;
+    margin-top: 8px;
+    background: #f8f8f8;
+    padding: 12px;
+    border: 2px inset #c0c0c0;
+    border-radius: 4px;
+}
+.stat-inner-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
+}
+.stat-inner-row .label { color: #60a0d8; text-shadow: 1px 1px 0 #d8e8f8; }
+.stat-inner-row .val { font-weight: bold; text-align: right; text-shadow: 1px 1px 0 var(--gba-text-shadow); }
+
+/* Left Panel Actions */
 .action-buttons {
     margin-top: 24px;
     display: flex;
@@ -227,6 +309,7 @@ img {
 .btn-danger { color: #d32f2f; }
 .btn-danger:hover { background: #f8e8e8; border-color: #d32f2f; }
 
+/* Right Panel PC Box Area */
 .pc-box-main {
     flex: 1;
     background: var(--pc-box-bg);
@@ -251,6 +334,7 @@ img {
     align-items: center;
     margin-bottom: 24px;
     box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px var(--dialogue-border-inner);
+    color: var(--gba-text);
 }
 
 .pc-box-header h2 { margin: 0; font-size: 1rem; text-shadow: 2px 2px 0 var(--gba-text-shadow); }
@@ -290,96 +374,286 @@ img {
     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
 
-.pc-filter-form {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-}
-
+/* --- PC FILTERS --- */
+.pc-filter-form { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; color: var(--gba-text);}
 .filter-inputs { display: flex; gap: 16px; flex: 1; }
-.filter-inputs input, .filter-inputs select {
-    padding: 12px; border: 4px solid var(--dialogue-border-outer);
-    background: #fff; font-family: inherit; font-size: 0.75rem;
-    box-shadow: inset 2px 2px 0 #e0e0e0;
-}
-.filter-inputs button {
-    background: var(--gba-green); color: #fff;
-    border: 4px solid #306030; font-family: inherit;
-    font-size: 0.75rem; padding: 0 24px; cursor: pointer;
-    text-shadow: 2px 2px 0 #306030;
-    box-shadow: inset 2px 2px 0 rgba(255,255,255,0.4);
-}
+.filter-inputs input, .filter-inputs select { padding: 12px; border: 4px solid var(--dialogue-border-outer); background: #fff; font-family: inherit; font-size: 0.75rem; box-shadow: inset 2px 2px 0 #e0e0e0; }
+.filter-inputs button { background: var(--gba-green); color: #fff; border: 4px solid #306030; font-family: inherit; font-size: 0.75rem; padding: 0 24px; cursor: pointer; text-shadow: 2px 2px 0 #306030; box-shadow: inset 2px 2px 0 rgba(255,255,255,0.4); }
 .filter-inputs button:hover { background: #88d860; }
 .result-count { font-size: 0.8rem; text-shadow: 2px 2px 0 var(--gba-text-shadow); }
 
 /* --- RETRO TRAINER CARD --- */
-.trainer-card {
-    background: linear-gradient(180deg, #60a0d8 0%, #a8d0e8 100%);
-    border: 6px solid #f8f8f8;
-    outline: 6px solid #202020;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 600px;
-    margin: 40px auto;
-    padding: 20px;
-    position: relative;
-    box-shadow: 8px 8px 0 rgba(0,0,0,0.2);
+.trainer-card { 
+    background: linear-gradient(180deg, #60a0d8 0%, #a8d0e8 100%); 
+    border: 6px solid #f8f8f8; 
+    outline: 6px solid #202020; 
+    border-radius: 16px; 
+    width: 100%; 
+    max-width: 600px; 
+    margin: 40px auto; 
+    padding: 20px; 
+    position: relative; 
+    box-shadow: 8px 8px 0 rgba(0,0,0,0.2); 
+    color: var(--gba-text);
 }
 
-.tc-header {
-    background: var(--dialogue-bg);
-    border: 4px solid #202020;
-    border-radius: 24px;
-    padding: 12px 24px;
-    margin-bottom: 32px;
-    display: inline-block;
-    box-shadow: inset 0 0 0 2px #fff, inset 0 0 0 4px var(--dialogue-border-inner);
+.tc-header { 
+    background: var(--dialogue-bg); 
+    border: 4px solid #202020; 
+    border-radius: 24px; 
+    padding: 12px 24px; 
+    margin-bottom: 32px; 
+    display: inline-block; 
+    box-shadow: inset 0 0 0 2px #fff, inset 0 0 0 4px var(--dialogue-border-inner); 
 }
 
 .tc-title { font-size: 1.1rem; letter-spacing: 2px; text-shadow: 2px 2px 0 var(--gba-text-shadow); }
-.tc-body { padding: 0 20px 20px; position: relative; z-index: 2; }
-.tc-row {
-    display: flex; justify-content: space-between; margin-bottom: 16px;
-    border-bottom: 4px dotted rgba(255,255,255,0.6); padding-bottom: 8px; width: 65%;
+
+.tc-body { 
+    padding: 10px 40px 40px 40px; 
+    position: relative; 
+    z-index: 2; 
 }
+
+.tc-row { 
+    display: flex; 
+    justify-content: space-between; 
+    margin-bottom: 20px; 
+    border-bottom: 4px dotted rgba(255,255,255,0.6); 
+    padding-bottom: 8px; 
+    width: 100%; 
+}
+
 .tc-label { font-size: 0.85rem; color: #204060; text-shadow: 1px 1px 0 rgba(255,255,255,0.4); }
 .tc-value { font-size: 0.9rem; text-shadow: 2px 2px 0 rgba(255,255,255,0.6); }
 .tc-name { color: var(--gba-red); text-shadow: 2px 2px 0 #ffb0b0;}
 .tc-stats { margin-top: 40px; }
 
-.trainer-sprite {
-    position: absolute; right: 20px; bottom: 20px;
-    width: 180px; height: 180px; object-fit: contain;
-    filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.15));
-}
-
-/* Forms (Login/Register/Add PKMN) */
-form:not(.pc-filter-form) {
-    background: var(--dialogue-bg);
-    border: 4px solid var(--dialogue-border-outer);
-    border-radius: 8px;
-    box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px var(--dialogue-border-inner), 4px 4px 0 rgba(0,0,0,0.15);
-    max-width: 500px; margin: 40px auto; padding: 32px;
-}
+/* --- FORMS & DROPDOWNS (Add PKMN) --- */
+form:not(.pc-filter-form) { background: var(--dialogue-bg); border: 4px solid var(--dialogue-border-outer); border-radius: 8px; box-shadow: inset 0 0 0 2px #ffffff, inset 0 0 0 4px var(--dialogue-border-inner), 4px 4px 0 rgba(0,0,0,0.15); max-width: 500px; margin: 40px auto; padding: 32px; color: var(--gba-text);}
 form label { display: block; margin-bottom: 8px; font-size: 0.8rem; }
-form input, form select {
-    width: 100%; margin-bottom: 20px; padding: 12px;
-    border: 4px solid var(--dialogue-border-outer); font-family: inherit; font-size: 0.8rem;
-}
-form button {
-    width: 100%; background: var(--gba-green); color: #fff;
-    border: 4px solid #306030; padding: 16px; font-family: inherit;
-    font-size: 0.9rem; cursor: pointer; text-shadow: 2px 2px 0 #306030;
-    box-shadow: inset 2px 2px 0 rgba(255,255,255,0.4);
-}
+form input, form select { width: 100%; margin-bottom: 20px; padding: 12px; border: 4px solid var(--dialogue-border-outer); font-family: inherit; font-size: 0.8rem; }
+form button { width: 100%; background: var(--gba-green); color: #fff; border: 4px solid #306030; padding: 16px; font-family: inherit; font-size: 0.9rem; cursor: pointer; text-shadow: 2px 2px 0 #306030; box-shadow: inset 2px 2px 0 rgba(255,255,255,0.4); }
 form button:hover { background: #88d860; }
 
+/* Custom Search Dropdown in Form */
+.species-search-wrap { position: relative; margin-bottom: 8px; }
+#species-search { width: 100%; box-sizing: border-box; margin-bottom: 4px;}
+#species-dropdown { display: none; position: absolute; z-index: 100; background: var(--dialogue-bg); border: 3px solid var(--dialogue-border-outer); border-radius: 6px; max-height: 200px; overflow-y: auto; width: 100%; box-sizing: border-box; box-shadow: 4px 4px 0 rgba(0,0,0,0.2); }
+.species-option { padding: 8px 12px; cursor: pointer; font-size: 0.75rem; color: var(--gba-text); border-bottom: 2px dotted var(--dialogue-border-inner); display: flex; align-items: center; gap: 12px; }
+.species-option:hover { background: #e0e8f8; color: var(--gba-blue); }
+.species-option img { image-rendering: pixelated; width: 32px; height: 32px; flex-shrink: 0; }
+.selected-species-row { display: none; align-items: center; gap: 16px; margin: 12px 0 24px; background: #e8f8e8; padding: 12px; border: 2px solid #a0c8a0; border-radius: 6px;}
+.selected-species-row img { image-rendering: pixelated; width: 64px; height: 64px; }
+.selected-species-name { font-size: 0.8rem; color: #206020; font-weight: bold;}
+
+/* --- HALL OF FAME LEADERBOARD --- */
+.hof-title { text-align: center; color: var(--hof-gold); font-size: 1.5rem; text-shadow: 3px 3px 0 #000; margin: 40px 0 10px; letter-spacing: 2px;}
+.hof-subtitle { text-align: center; font-size: 0.75rem; color: #a8c0e8; margin-bottom: 40px; text-shadow: 1px 1px 0 #000;}
+
+.hof-list { display: flex; flex-direction: column; gap: 24px; max-width: 800px; margin: 0 auto; }
+
+/* Base Leaderboard Card (Ranks 4-10) */
+.hof-card {
+    display: flex; 
+    align-items: flex-start; 
+    background: linear-gradient(90deg, rgba(248,248,248,1) 0%, rgba(220,220,220,1) 100%);
+    border: 4px solid #f8f8f8; 
+    outline: 4px solid #102040; 
+    border-radius: 8px;
+    padding: 20px 24px 32px 24px;
+    box-shadow: inset 0 0 0 4px #b0b0b0, 8px 8px 0 rgba(0,0,0,0.3);
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.1s ease;
+}
+.hof-card:hover {
+    transform: translateY(-2px);
+}
+
+/* podium card enhancements */
+.hof-card.rank-card-1 { /* GOLD CHAMPION CARD */
+    border: 4px solid #f8d820;
+    outline: 4px solid #806000;
+    background: linear-gradient(90deg, #fffdeb 0%, #ffe082 100%);
+    box-shadow: inset 0 0 0 4px #ffd54f, 8px 8px 0 rgba(0,0,0,0.35);
+}
+.hof-card.rank-card-2 { /* SILVER RUNNER-UP CARD */
+    border: 4px solid #e0e0e0;
+    outline: 4px solid #505050;
+    background: linear-gradient(90deg, #f5f5f5 0%, #cfd8dc 100%);
+    box-shadow: inset 0 0 0 4px #b0bec5, 8px 8px 0 rgba(0,0,0,0.3);
+}
+.hof-card.rank-card-3 { /* BRONZE THIRD-PLACE CARD */
+    border: 4px solid #d7ccc8;
+    outline: 4px solid #5d4037;
+    background: linear-gradient(90deg, #efebe9 0%, #d7ccc8 100%);
+    box-shadow: inset 0 0 0 4px #bcaaa4, 8px 8px 0 rgba(0,0,0,0.3);
+}
+
+/* Upvote Counter on the right */
+.hof-card::before {
+    content: "▲ " attr(data-upvotes); position: absolute; right: 20px; top: 20px;
+    font-size: 1.2rem; color: var(--gba-red); text-shadow: 2px 2px 0 #ffb0b0; font-weight: bold;
+}
+
+/* Base Rank Text */
+.hof-rank { font-size: 2rem; width: 80px; text-align: center; margin-right: 16px; margin-top: 10px; }
+
+/* Custom Retro Colors for 1st, 2nd, and 3rd Place */
+.rank-1 { color: #f8d820; text-shadow: 3px 3px 0 #a08000, -1px -1px 0 #fff; } /* Gold */
+.rank-2 { color: #d0d0d0; text-shadow: 3px 3px 0 #606060, -1px -1px 0 #fff; } /* Silver */
+.rank-3 { color: #c08040; text-shadow: 3px 3px 0 #604020, -1px -1px 0 #fff; } /* Bronze */
+.rank-other { color: #a0a0a0; text-shadow: 3px 3px 0 #606060; font-size: 1.5rem; } /* Ranks 4-10 */
+
+/* Circular Image Frame */
+.hof-sprite-box { 
+    width: 110px; 
+    height: 110px; 
+    background: #fff; 
+    border: 4px solid var(--hof-bg); 
+    border-radius: 50%; 
+    margin-right: 24px; 
+    box-shadow: inset 4px 4px 0 rgba(0,0,0,0.2); 
+    flex-shrink: 0;
+    overflow: hidden; 
+    position: relative;
+}
+
+.hof-sprite-box img { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    display: block;
+}
+
+.hof-details {
+    flex: 1;
+}
+.hof-details h2 { margin: 0 0 8px 0; font-size: 1.1rem; color: var(--gba-text); text-shadow: 2px 2px 0 #fff; text-transform: uppercase;}
+.hof-details p { margin: 0 0 6px 0; font-size: 0.75rem; color: #505050; }
+.hof-details .hof-trainer { color: var(--gba-blue); }
+
+/* Official Species Tag in Hall of Fame details block */
+.hof-species-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.6);
+    padding: 4px 14px 4px 6px; /* Tightened left padding to accommodate zoomed sprite */
+    border-radius: 28px;
+    border: 2px solid #c0c0c0;
+    margin-bottom: 10px;
+    box-shadow: inset 1px 1px 0 #fff;
+    height: 50px;       /* Fixed height to keep all capsules perfectly identical */
+    overflow: hidden;   /* Cookie-cutter clip to keep large sprites contained */
+}
+
+.hof-species-tag img {
+    width: 48px;        /* Enlarged standard image canvas */
+    height: 48px;       /* Enlarged standard image canvas */
+    object-fit: contain;
+    image-rendering: pixelated; 
+    flex-shrink: 0;
+    margin: 0px -2px 0px -6px; /* Negative margins pull the zoomed sprite center-stage */
+}
+
+.hof-species-tag span {
+    font-size: 0.65rem;
+    color: #404040;
+    text-transform: uppercase;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+/* Click Indicator Label */
+.hof-toggle-arrow {
+    position: absolute;
+    bottom: 8px;
+    right: 20px;
+    font-size: 0.5rem;
+    color: #888;
+    text-transform: uppercase;
+}
+
+/* Expandable Area */
+.hof-expandable {
+    width: 100%;
+    margin-top: 16px;
+    border-top: 2px dotted #c0c0c0;
+    padding-top: 16px;
+}
+
+/* High-Contrast GBA Battle Screen Stats Grid (Leaderboard-Only override) */
+.hof-card .stats-grid {
+    background: #1c2434; /* Deep slate GBA screen color */
+    border: 3px solid #505050;
+    border-radius: 6px;
+    padding: 12px 16px;
+    box-shadow: inset 3px 3px 0 #000000;
+}
+
+.hof-card .stat-inner-row .label {
+    color: #ff8a80; /* High-visibility soft red labels */
+    text-shadow: 1px 1px 0 #000;
+}
+
+.hof-card .stat-inner-row .val {
+    color: #ffffff; /* Crisp white value numbers */
+    text-shadow: 1px 1px 0 #000;
+}
+
+/* Retro PKMN Description Box */
+.pkmn-description {
+    font-size: 0.65rem;
+    color: #505050;
+    line-height: 1.6;
+    background: #ffffff;
+    border: 2px solid var(--dialogue-border-inner);
+    border-radius: 4px;
+    padding: 8px 10px;
+    margin-top: 12px;
+    word-break: break-word;
+    box-shadow: inset 1px 1px 2px rgba(0,0,0,0.05);
+}
+
+/* GBA Textarea styling for forms */
+form textarea {
+    width: 100%;
+    margin-bottom: 20px;
+    padding: 12px;
+    border: 4px solid var(--dialogue-border-outer);
+    font-family: inherit;
+    font-size: 0.8rem;
+    resize: none; /* Prevents manual scaling from breaking layout */
+    background: #fff;
+    box-shadow: inset 2px 2px 0 #e0e0e0;
+}
+form textarea:focus {
+    outline: none;
+    border-color: var(--gba-red);
+}
+
+/* Hall of Fame / PC Box Description expansion link */
+.desc-toggle-link {
+    color: var(--gba-blue);
+    cursor: pointer;
+    font-size: 0.6rem;
+    text-decoration: underline;
+    margin-left: 4px;
+    display: inline-block;
+}
+.desc-toggle-link:hover {
+    color: var(--gba-red);
+}
+
+/* --- MEDIA QUERIES (RESPONSIVENESS) --- */
 @media (max-width: 1024px) {
     .pc-box-grid { grid-template-columns: repeat(5, 1fr); }
     .tc-row { width: 100%; }
     .trainer-sprite { right: 10px; bottom: 10px; width: 120px; opacity: 0.4;}
 }
+
 @media (max-width: 768px) {
     .navbar { flex-direction: column; gap: 16px; padding: 16px; width: 95%; margin-top: 10px;}
     .pc-box { flex-direction: column; }
@@ -388,7 +662,12 @@ form button:hover { background: #88d860; }
     .pc-filter-form { flex-direction: column; gap: 16px; text-align: center;}
     .filter-inputs { flex-direction: column; width: 100%;}
     .trainer-card { width: 95%; }
+    .hof-card { flex-direction: column; text-align: center; padding-top: 40px;}
+    .hof-card::before { top: 10px; right: 10px; font-size: 1rem;}
+    .hof-rank { width: 100%; margin: 0 0 16px 0; }
+    .hof-sprite-box { margin: 0 auto 16px auto; }
 }
+
 @media (max-width: 480px) {
     .pc-box-grid { grid-template-columns: repeat(3, 1fr); }
 }
